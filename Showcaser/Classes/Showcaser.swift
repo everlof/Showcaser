@@ -32,19 +32,17 @@ public class Showcaser: NSObject {
 
     // MARK: Public properties
 
-    public static var backdropColor = UIColor.black.withAlphaComponent(0.8)
+    public static var alertBackgroundColor = UIColor.white.withAlphaComponent(0.9)
 
-    public static var alertBackgroundColor = UIColor.black.withAlphaComponent(0.9)
+    public static var leadToLargeCircleColor = UIColor.AppleHIG.red
 
-    public static var leadToLargeCircleColor = UIColor.AppleHIG.blue
+    public static var alertBorderColor = UIColor.AppleHIG.red
 
-    public static var alertBorderColor = UIColor.AppleHIG.blue
+    public static var alertTitleTextColor = UIColor.AppleHIG.red
 
-    public static var alertTitleTextColor = UIColor.AppleHIG.blue
+    public static var alertBodyTextColor = UIColor.AppleHIG.red
 
-    public static var alertBodyTextColor = UIColor.AppleHIG.blue
-
-    public static var alertHintTextColor = UIColor.AppleHIG.blue
+    public static var alertHintTextColor = UIColor.AppleHIG.red
 
     public static var titleFont = UIFont.systemFont(ofSize: 30) // UIFont.forHints(with: 30)
 
@@ -58,15 +56,22 @@ public class Showcaser: NSObject {
 
     public static var lineDashPattern: [NSNumber]? = [5, 5]
 
+    public enum BackdropStyle {
+        case dimmed(UIColor)
+        case blur(UIBlurEffect.Style)
+    }
+
     public struct Config {
         let title: String
         let body: String
         let areas: [Area]
+        let backdrop: BackdropStyle
 
-        public init(title: String, body: String, areas: [Area]) {
+        public init(title: String, body: String, areas: [Area], backdrop: BackdropStyle = .dimmed(.white)) {
             self.title = title
             self.body = body
             self.areas = areas
+            self.backdrop = backdrop
         }
     }
 
@@ -219,9 +224,7 @@ internal class ShowcaseContainerView: UIView {
 
     fileprivate let contentView: ShowcaseView
 
-    private let backgroundView = UIView()
-
-    internal var backdropColor = Showcaser.backdropColor
+    private var backgroundView = UIView()
 
     private var feedbackGenerator = UIImpactFeedbackGenerator()
 
@@ -240,13 +243,24 @@ internal class ShowcaseContainerView: UIView {
     internal init(config: Showcaser.Config) {
         contentView = ShowcaseView(config: config)
         super.init(frame: .zero)
-        addSubview(backgroundView)
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        backgroundView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        backgroundView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        backgroundView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        backgroundView.backgroundColor = .clear
+
+        if !UIAccessibility.isReduceTransparencyEnabled {
+            switch config.backdrop {
+            case .blur(let effect):
+                let blurEffect = UIBlurEffect(style: effect)
+                backgroundView = UIVisualEffectView(effect: blurEffect)
+            case .dimmed(let color):
+                backgroundView.backgroundColor = color
+            }
+
+            addSubview(backgroundView)
+            backgroundView.alpha = 0.0
+            backgroundView.translatesAutoresizingMaskIntoConstraints = false
+            backgroundView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+            backgroundView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+            backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+            backgroundView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -259,7 +273,11 @@ internal class ShowcaseContainerView: UIView {
         }
 
         UIView.animate(withDuration: Showcaser.AnimationDurations.appearFadeIn.duration) {
-            self.backgroundView.backgroundColor = self.backdropColor
+            if UIAccessibility.isReduceTransparencyEnabled {
+                self.backgroundView.backgroundColor = UIColor.black
+            } else {
+                self.backgroundView.alpha = 0.7
+            }
         }
     }
 
@@ -289,7 +307,7 @@ internal class ShowcaseContainerView: UIView {
             CGAffineTransform.identity.translatedBy(x: 0, y: -bounds.maxY)
         )
 
-        let appearAnimation = CASpringAnimation(keyPath: "transform")
+        let appearAnimation = CASpringAnimation(keyPath: #keyPath(CAShapeLayer.transform))
         appearAnimation.fromValue = contentView.layer.transform
         appearAnimation.toValue = CATransform3DIdentity
         appearAnimation.mass = 0.65
@@ -299,7 +317,7 @@ internal class ShowcaseContainerView: UIView {
             completed()
         }
 
-        let scaleAnimation = CABasicAnimation(keyPath: "transform")
+        let scaleAnimation = CABasicAnimation(keyPath: #keyPath(CAShapeLayer.transform))
         scaleAnimation.fromValue = CATransform3DMakeAffineTransform(CGAffineTransform.identity.scaledBy(x: 1.0, y: 1.0))
         scaleAnimation.toValue = CATransform3DIdentity
         scaleAnimation.isAdditive = true
@@ -335,7 +353,7 @@ internal class ShowcaseContainerView: UIView {
             .compactMap { $0 as? CAShapeLayer }
             .enumerated()
             .forEach { (offset, layer) in
-                let animation = CABasicAnimation(keyPath: "opacity")
+                let animation = CABasicAnimation(keyPath: #keyPath(CAShapeLayer.opacity))
                 animation.fromValue = 1.0
                 animation.toValue = 0.0
                 animation.duration = 0.1

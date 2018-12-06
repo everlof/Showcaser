@@ -83,10 +83,9 @@ class MatrixShowcaseViewController: UIViewController {
         (0..<5).forEach { i in
             (0..<3).forEach { j in
                 let colorName = verticalColors[i].name
-                let alpha = round(CGFloat(Double(j + 1) / 3.0))
                 let style = styles[((i * 3) + j) % styles.count]
                 areas.append(
-                    Showcaser.Area(text: "This color is called `\(colorName)`. Here, with an alpha of `\(alpha)` and style => `\(style)`",
+                    Showcaser.Area(text: "This color is called \"\(colorName)\". Here with style=`\(style)`",
                                    element: .view(verticalStackView.subviews[i].subviews[j]),
                                    style: style))
             }
