@@ -541,21 +541,6 @@ internal class ShowcaseContainerView: UIView {
         maskLayer.fillRule = .evenOdd
         maskLayer.path = fromPath
 
-        let dashes = true
-        if dashes {
-            areaLayer.lineDashPattern = Showcaser.lineDashPattern
-        }
-
-        let walkingAnts: (() -> CAAnimation) = {
-            let walkingAntsAnimation = CABasicAnimation(keyPath: #keyPath(CAShapeLayer.lineDashPhase))
-            let toValue = lineLayer.lineDashPattern?.reduce(0) { $0 - $1.intValue } ?? 0
-            walkingAntsAnimation.fromValue = 0
-            walkingAntsAnimation.toValue = toValue
-            walkingAntsAnimation.repeatCount = .infinity
-            walkingAntsAnimation.duration = 8 * Double(toValue) * 0.1
-            return walkingAntsAnimation
-        }
-
         let followTheLineAnimation = setup(CAKeyframeAnimation(keyPath: #keyPath(CAShapeLayer.strokeEnd)), for: .lineDrawLine)
         followTheLineAnimation.calculationMode = .paced
         followTheLineAnimation.values = [0.0, 1.0]
@@ -564,10 +549,6 @@ internal class ShowcaseContainerView: UIView {
             // Once we've reached this destination, animate the size of this circle
             self.layer.addSublayer(areaLayer)
             areaLayer.add(targetDotPathAnimation, forKey: nil)
-
-            if dashes {
-                areaLayer.add(walkingAnts(), forKey: nil)
-            }
 
             // Mask away part of the line (that's inside the circle)
             followLineMask.add(maskAnimation, forKey: nil)
@@ -581,10 +562,6 @@ internal class ShowcaseContainerView: UIView {
             // Next follow the "path" to the "target dot"
             self.layer.addSublayer(lineLayer)
             lineLayer.add(followTheLineAnimation, forKey: nil)
-
-            if dashes {
-                lineLayer.add(walkingAnts(), forKey: nil)
-            }
         }
 
         layer.addSublayer(areaLayer)

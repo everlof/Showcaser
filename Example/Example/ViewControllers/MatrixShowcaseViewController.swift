@@ -41,9 +41,7 @@ class MatrixShowcaseViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = .white
-
         verticalStackView.axis = .vertical
         verticalStackView.distribution = .fillEqually
         verticalStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,7 +61,8 @@ class MatrixShowcaseViewController: UIViewController {
                 let v = UIView()
                 let alpha = CGFloat(Double(j + 1) / 3.0)
                 horizontalStackView.addArrangedSubview(v)
-                (verticalStackView.arrangedSubviews[i] as! UIStackView).arrangedSubviews[j].backgroundColor = verticalColors[i].withAlphaComponent(alpha)
+                (verticalStackView.arrangedSubviews[i] as! UIStackView)
+                    .arrangedSubviews[j].backgroundColor = verticalColors[i].withAlphaComponent(alpha)
             }
         }
     }
@@ -72,14 +71,24 @@ class MatrixShowcaseViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        let styles: [Showcaser.Area.Style] =  [
+            .rectangle,
+            .roundCappedToLongestSide,
+            .roundCappedToShortestSide,
+            .roundCorner(radius: 7)
+        ]
+
         var areas = [Showcaser.Area]()
         (0..<5).forEach { i in
             (0..<3).forEach { j in
                 let colorName = verticalColors[i].name
-                let alpha = CGFloat(Double(j + 1) / 3.0)
-                areas.append(Showcaser.Area(text: "This color is called `\(colorName)`. Here, with an alpha of `\(alpha)`.",
-                                            element: .view(verticalStackView.subviews[i].subviews[j]),
-                                            style: .roundCorner(radius: 3)))
+                let alpha = round(CGFloat(Double(j + 1) / 3.0))
+                let style = styles[((i * 3) + j) % styles.count]
+                areas.append(
+                    Showcaser.Area(text: "This color is called `\(colorName)`. Here, with an alpha of `\(alpha)` and style => `\(style)`",
+                                   element: .view(verticalStackView.subviews[i].subviews[j]),
+                                   style: style))
             }
         }
 
