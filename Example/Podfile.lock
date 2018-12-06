@@ -1,0 +1,23 @@
+PODS:
+  - NameThatColor (0.1.0)
+  - Showcaser (0.1.0)
+
+DEPENDENCIES:
+  - NameThatColor
+  - Showcaser (from `../Showcaser.podspec`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - NameThatColor
+
+EXTERNAL SOURCES:
+  Showcaser:
+    :path: "../Showcaser.podspec"
+
+SPEC CHECKSUMS:
+  NameThatColor: 4064a9b44ad671fec06c0f10c815c024819d9c2f
+  Showcaser: 83269eb12d121ee9782b8c6f085f0f891296e298
+
+PODFILE CHECKSUM: 80c899b3cb8e7ab65c356e9b03092d157b3b2a82
+
+COCOAPODS: 1.5.3
