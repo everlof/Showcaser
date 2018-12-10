@@ -20,16 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
+import Foundation
 
-extension CGRect {
+internal class ShowcaseViewController: UIViewController {
 
-    internal var center: CGPoint {
-        return CGPoint(x: midX, y: midY)
+    private let config: Showcaser.Config
+
+    internal var handdrawnView: ShowcaseContainerView {
+        return view as! ShowcaseContainerView
     }
 
-    internal var collapsed: CGRect {
-        return CGRect(origin: center, size: .zero)
+    internal init(config: Showcaser.Config) {
+        self.config = config
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func loadView() {
+        view = ShowcaseContainerView(config: config)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        (view as! ShowcaseContainerView).appear()
     }
 
 }
