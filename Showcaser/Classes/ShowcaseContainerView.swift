@@ -173,11 +173,13 @@ internal class ShowcaseContainerView: UIView {
         }
     }
 
-    internal func yOffset(for area: Showcaser.Area) -> CGFloat? {
+    internal func yOffset(for step: Showcaser.Step) -> CGFloat? {
+        guard let area = step.area else { return 0 }
+
         let areaFrame = area.frame
         let availableWidthForText = contentView.stackView.frame.width
         let textSize =
-            (area.text as NSString)
+            (step.text as NSString)
                 .boundingRect(with: CGSize(width: availableWidthForText, height: .greatestFiniteMagnitude),
                               options: .usesLineFragmentOrigin,
                               attributes: [NSAttributedString.Key.font: Showcaser.bodyFont],
@@ -303,7 +305,8 @@ internal class ShowcaseContainerView: UIView {
         )
     }
 
-    internal func addIndicatorTo(area: Showcaser.Area) {
+    internal func addIndicatorTo(step: Showcaser.Step) {
+        guard let area = step.area else { return }
         feedbackGenerator.prepare()
 
         let areaRect = area.frame

@@ -47,18 +47,17 @@ internal class ShowcaseView: UIView {
     private var feedbackGenerator = UISelectionFeedbackGenerator()
 
     func progress() -> Bool {
-        let areaIndex = stackViewViewIndex - 2
-        guard areaIndex < config.areas.count else { return false }
+        let stepIndex = stackViewViewIndex - 2
+        guard stepIndex < config.steps.count else { return false }
 
         feedbackGenerator.prepare()
         feedbackGenerator.selectionChanged()
 
-        let area = config.areas[areaIndex]
-
+        let step = config.steps[stepIndex]
         let targetView = stackView.arrangedSubviews[stackViewViewIndex]
         targetView.alpha = 0
 
-        if let yOffset = showcaseContainerView?.yOffset(for: area) {
+        if let yOffset = showcaseContainerView?.yOffset(for: step) {
             showcaseContainerView?.yOffsetConstraint?.constant = yOffset
         } else {
             showcaseContainerView?.yOffsetConstraint?.constant = 0
@@ -83,7 +82,7 @@ internal class ShowcaseView: UIView {
                 UIView.animate(withDuration: 0.15, animations: {
                     targetView.alpha = 1.0
                 }, completion: { _ in
-                    self.showcaseContainerView?.addIndicatorTo(area: area)
+                    self.showcaseContainerView?.addIndicatorTo(step: step)
                 })
             })
         }
@@ -124,7 +123,7 @@ internal class ShowcaseView: UIView {
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(bodyLabel)
 
-        config.areas.forEach { field in
+        config.steps.forEach { field in
             let lbl = ShowcaseView.label(for: .body)
             lbl.text = field.text
             lbl.isHidden = true

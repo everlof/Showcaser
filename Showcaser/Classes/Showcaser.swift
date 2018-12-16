@@ -38,9 +38,9 @@ public class Showcaser: NSObject {
 
     public static var alertHintTextColor = UIColor.AppleHIG.red
 
-    public static var titleFont = UIFont.systemFont(ofSize: 30) // UIFont.forHints(with: 30)
+    public static var titleFont = UIFont.systemFont(ofSize: 30)
 
-    public static var bodyFont = UIFont.systemFont(ofSize: 21) // UIFont.forHints(with: 21)
+    public static var bodyFont = UIFont.systemFont(ofSize: 21)
 
     public static var alertMargins = UIEdgeInsets(top: 18, left: 18, bottom: 18, right: 18)
 
@@ -58,14 +58,24 @@ public class Showcaser: NSObject {
     public struct Config {
         let title: String
         let body: String
-        let areas: [Area]
+        let steps: [Step]
         let backdrop: BackdropStyle
 
-        public init(title: String, body: String, areas: [Area], backdrop: BackdropStyle = .dimmed(.white)) {
+        public init(title: String, body: String, steps: [Step], backdrop: BackdropStyle = .dimmed(.white)) {
             self.title = title
             self.body = body
-            self.areas = areas
+            self.steps = steps
             self.backdrop = backdrop
+        }
+    }
+
+    public struct Step {
+        let text: String
+        let area: Area?
+
+        public init(text: String, area: Area? = nil) {
+            self.text = text
+            self.area = area
         }
     }
 
@@ -83,18 +93,15 @@ public class Showcaser: NSObject {
             case roundCorner(radius: CGFloat)
         }
 
-        let text: String
         let element: Element
         let style: Style
         let inset: UIEdgeInsets
         let offset: CGSize
 
-        public init(text: String,
-             element: Element,
-             style: Style = .roundCappedToShortestSide,
-             inset: UIEdgeInsets = .zero,
-             offset: CGSize = .zero) {
-            self.text = text
+        public init(element: Element,
+                    style: Style = .roundCappedToShortestSide,
+                    inset: UIEdgeInsets = .zero,
+                    offset: CGSize = .zero) {
             self.element = element
             self.style = style
             self.inset = inset

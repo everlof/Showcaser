@@ -79,21 +79,23 @@ class MatrixShowcaseViewController: UIViewController {
             .roundCorner(radius: 7)
         ]
 
-        var areas = [Showcaser.Area]()
+        var steps = [Showcaser.Step]()
         (0..<5).forEach { i in
             (0..<3).forEach { j in
                 let colorName = verticalColors[i].name
                 let style = styles[((i * 3) + j) % styles.count]
-                areas.append(
-                    Showcaser.Area(text: "This color is called \"\(colorName)\". Here with style=`\(style)`",
-                                   element: .view(verticalStackView.subviews[i].subviews[j]),
-                                   style: style))
+                if ((i * 3) + j) % 2 == 0 {
+                    steps.append(Showcaser.Step(text: "This color is called \"\(colorName)\". Here with style=`\(style)`",
+                        area: Showcaser.Area(element: .view(verticalStackView.subviews[i].subviews[j]), style: style)))
+                } else {
+                    steps.append(Showcaser.Step(text: "This color is called \"\(colorName)\". Here with style=`\(style)`"))
+                }
             }
         }
 
         let config = Showcaser.Config(title: "Hello there! 🙌",
                                       body: "Welcome to `Showcaser`, this is an `Example` app for the library.",
-                                      areas: areas)
+                                      steps: steps)
         showcaser = Showcaser(config: config)
         showcaser.show()
     }

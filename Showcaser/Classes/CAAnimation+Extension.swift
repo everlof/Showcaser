@@ -38,7 +38,7 @@ extension CAAnimation: CAAnimationDelegate {
         static var callbackKey = "CAAnimation_callbackKey"
     }
 
-    public func onCompletion(_ completion: @escaping (() -> Void)) {
+    internal func onCompletion(_ completion: @escaping (() -> Void)) {
         objc_setAssociatedObject(self,
                                  &AssociatedKeys.callbackKey,
                                  CallbackContainer(callback: completion),
