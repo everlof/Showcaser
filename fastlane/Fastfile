@@ -14,7 +14,7 @@
 # update_fastlane
 
 default_platform(:ios)
-podspec_name = "Showcaser.podspec" # Don’t forget to update the podspec_name to the name of your podspec file.
+
 
 platform :ios do
 
@@ -34,6 +34,7 @@ platform :ios do
   end
 
   def release(type)
+    podspec_name = "Showcaser.podspec"
     pod_lib_lint
     version = version_bump_podspec(path: podspec_name,
                                    bump_type: type)
